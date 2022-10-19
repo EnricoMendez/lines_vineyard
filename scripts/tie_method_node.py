@@ -18,8 +18,8 @@ class ImageFilter():
         self.pub=rospy.Publisher("otsuImage",Image,queue_size=10)
 
         ############################### SUBSCRIBERS #####################################   
-        #self.image_sub = rospy.Subscriber("/usb_cam/image_raw",Image,self.camera_callback) 
-        self.image_sub = rospy.Subscriber("/realsense/color/image_raw",Image,self.camera_callback) 
+        self.image_sub = rospy.Subscriber("/usb_cam/image_raw",Image,self.camera_callback) 
+        #self.image_sub = rospy.Subscriber("/realsense/color/image_raw",Image,self.camera_callback) 
         
         ############ CONSTANTS ################  
         self.bridge_object = CvBridge() # create the cv_bridge object
