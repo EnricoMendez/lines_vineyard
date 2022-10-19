@@ -21,8 +21,8 @@ class ImageFilter():
         self.pub_vel = rospy.Publisher('cmd_vel', Twist,queue_size=1)
 
         ############################### SUBSCRIBERS #####################################   
-        #self.image_sub = rospy.Subscriber("/usb_cam/image_raw",Image,self.camera_callback) 
-        self.image_sub = rospy.Subscriber("/realsense/color/image_raw",Image,self.camera_callback) 
+        self.image_sub = rospy.Subscriber("/usb_cam/image_raw",Image,self.camera_callback) 
+        #self.image_sub = rospy.Subscriber("/realsense/color/image_raw",Image,self.camera_callback) 
         self.vel_msg = Twist()
         ############ CONSTANTS ################  
         self.bridge_object = CvBridge() # create the cv_bridge object
@@ -31,9 +31,9 @@ class ImageFilter():
         self.bridge = CvBridge()
         self.vel_msg = Twist()      
         self.p = -0.01             #Control gain
-        self.vel_msg.linear.x = 0.5   #Linear velocity
+        self.vel_msg.linear.x = 0.2   #Linear velocity
         self.proportion_criterion = 1.5
-        self.correction_gain = 0.1  #Angular     
+        self.correction_gain = 0.5  #Angular     
 
         #********** INIT NODE **********###  
         r = rospy.Rate(10) #1Hz  
