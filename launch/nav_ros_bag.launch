@@ -1,5 +1,5 @@
 <launch>
-<node pkg="rosbag" type="play" name="player" output="screen" args="-l $(find lines_vineyard)/video2vineyard.bag"/>
+<node pkg="rosbag" type="play" name="player" output="screen" args="-l $(find lines_vineyard)/navTest1.bag"/>
 <node pkg='lines_vineyard' type='tie_method_node.py' name='tie_method_node'/>
 <node type="rviz" name="rviz" pkg="rviz" args="-d $(find lines_vineyard)/rviz_config/muestra.rviz"/>
 </launch>

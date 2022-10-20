@@ -25,12 +25,12 @@ class ImageFilter():
         self.bridge = CvBridge()
 
         rate = 10  #Hz
-        seconds = 5
+        seconds = 15
 
         ############ VARIABLES ################
         aux_cont = 0
         img_cont = 0
-        path = '/home/javier/catkin_ws/src/lines_vineyard/scripts/test_images'
+        path = '/home/oem/estancia22/vineyard_ws/src/lines_vineyard/scripts/test_images'
 
         #********** INIT NODE **********###  
         r = rospy.Rate(rate)  
