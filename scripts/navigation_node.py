@@ -2,6 +2,7 @@
 
 #Code to filter the image with the otsu threshold
 
+from email.mime import image
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -43,7 +44,24 @@ class ImageFilter():
                 cv2.waitKey(1) 
                 r.sleep()  
         cv2.destroyAllWindows()        
+    def blob_filter(self,image):
+        contours,hierarchy = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        
+        maxContour = 0
+        for contour in contours:
+            
+            contourSize = cv2.contourArea(contour)
+            if contourSize > maxContour:
+                maxContour = contourSize
+                maxContourData = contour
 
+        # Create a mask only containing the largest blop
+        mask = np.zeros_like(image)
+        mask = mask.astype('uint8')
+        mask=cv2.fillPoly(mask,[maxContourData],1)
+        print (len(contours))
+        plt.imshow(mask,cmap='gray')
+        return mask
     def navigation(self,y,idx,left,right):
         prop_left = left/right
         prop_right = right/left
@@ -70,31 +88,30 @@ class ImageFilter():
             print('Velocity:')
             print(str(self.vel_msg))
         self.pub_vel.publish(self.vel_msg)
+    def center_detection(self,image):
+        x,y = image.shape
+        array = np.zeros((y,2))
+        for i in range(y):
+            value = np.sum(image[:,i])
+            array[i,1] = value
+            array[i,0] = i
 
+        array = array[array[:, 1].argsort()[::-1]]
+
+        index = int(np.mean(array[0:5,0]))
+        left = np.sum(image[0:int(x/3*2),0:index])
+        right = np.sum(image[0:int(x/3*2),index:y])
+        return y,x,index,left,right
     def image_processing(self,image):
         gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         blur = cv2.GaussianBlur(gray,(5,5),0)
         ret,otsu = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-
+        blob = self.blob_filter(otsu)
         image_message = self.bridge.cv2_to_imgmsg(otsu, encoding="passthrough")
         self.pub.publish(image_message)
-        x,y = otsu.shape
-        array = np.zeros((y,2))
-        for i in range(y):
-            value = np.sum(otsu[:,i])
-            array[i,1] = value
-            array[i,0] = i
-        #array=np.flipud(np.sort(array))
-
-        print('array: ',array)
-        array = array[array[:, 1].argsort()[::-1]]
-        
-
-        index = int(np.mean(array[0:5,0]))
-        left = np.sum(otsu[0:int(x/3*2),0:index])
-        right = np.sum(otsu[0:int(x/3*2),index:y])
+        y,x,index,left,right = self.center_detection(otsu)
         self.navigation(y,index,left,right)
-        print(array)
+
         print('left: ',left)
         print('right ',right)
         print('index: ',index)
@@ -102,6 +119,9 @@ class ImageFilter():
 
         cv2.line(image,(index,0),(index,x),(255,0,0),9)
 
+
+        y,x,index,left,right = self.center_detection(blob)
+        cv2.line(image,(index,0),(index,x),(0,255,255),9)
         return image
 
     def camera_callback(self,data):
