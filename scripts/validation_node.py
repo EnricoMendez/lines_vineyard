@@ -54,9 +54,9 @@ class validation_class:
 
         aux = 0
         for i in range(5):
-            aux = data.ranges[lenght/2 + i]
+            aux = data.ranges[int(lenght/2)-1 + i]
         for i in range(5):
-            aux = data.ranges[lenght/2 - i]
+            aux = data.ranges[int(lenght/2)-1 - i]
         self.left_dist = aux / 10 
 
     
