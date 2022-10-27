@@ -10,7 +10,7 @@
 
  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched --> 
 
-  <include file="$(find cpr_agriculture_gazebo/)/launch/agriculture_world.launch"> 
+  <include file="$(find cpr_agriculture_gazebo)/launch/agriculture_world.launch"> 
 
     <arg name="world_name" value="$(find lines_vineyard)/world/test_world.world"/>  
 
