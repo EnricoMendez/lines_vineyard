@@ -36,6 +36,15 @@ class ImageFilter():
         self.proportion_criterion = 1.5
         self.correction_gain = 0.5  #Angular     
 
+        ########### VARIABLES ###########
+        self.center_init_flag = 0
+        self.center_allow_flag = 0
+        self.center_record_index = 0
+        self.center_record_y = 0
+        self.center_record_x = 0
+        self.center_record_left = 0
+        self.center_record_right = 0
+
         #********** INIT NODE **********###  
         r = rospy.Rate(10) #1Hz  
         print("Node initialized 10hz") 
@@ -62,6 +71,7 @@ class ImageFilter():
         print (len(contours))
         plt.imshow(mask,cmap='gray')
         return mask
+
     def navigation(self,y,idx,left,right):
         prop_left = left/right
         prop_right = right/left
@@ -88,6 +98,7 @@ class ImageFilter():
             print('Velocity:')
             print(str(self.vel_msg))
         self.pub_vel.publish(self.vel_msg)
+
     def center_detection(self,image):
         x,y = image.shape
         array = np.zeros((y,2))
@@ -101,7 +112,29 @@ class ImageFilter():
         index = int(np.mean(array[0:5,0]))
         left = np.sum(image[0:int(x/3*2),0:index])
         right = np.sum(image[0:int(x/3*2),index:y])
-        return y,x,index,left,right
+
+        if self.center_init_flag == 0:
+            self.center_record_index = index
+            self.center_record_y = y
+            self.center_record_x = x
+            self.center_record_left = left
+            self.center_record_right = right
+            self.center_init_flag = 1
+        else:
+            
+            if abs(self.center_record_index - index) < 150:
+                self.center_record_index = index
+                self.center_record_y = y
+                self.center_record_x = x
+                self.center_record_left = left
+                self.center_record_right = right
+            else:
+                pass
+
+            #print('index detect|control: ',index, ' | ',self.center_record_index)
+
+        return self.center_record_y, self.center_record_x, self.center_record_index, self.center_record_left, self.center_record_right
+
     def image_processing(self,image):
         gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         blur = cv2.GaussianBlur(gray,(5,5),0)
@@ -109,7 +142,7 @@ class ImageFilter():
         blob = self.blob_filter(otsu)
         image_message = self.bridge.cv2_to_imgmsg(otsu, encoding="passthrough")
         self.pub.publish(image_message)
-        y,x,index,left,right = self.center_detection(otsu)
+        y,x,index,left,right = self.center_detection(blob)
         self.navigation(y,index,left,right)
 
         print('left: ',left)
@@ -120,7 +153,7 @@ class ImageFilter():
         cv2.line(image,(index,0),(index,x),(255,0,0),9)
 
 
-        y,x,index,left,right = self.center_detection(blob)
+        y,x,index,left,right = self.center_detection(otsu)
         cv2.line(image,(index,0),(index,x),(0,255,255),9)
         return image
 
