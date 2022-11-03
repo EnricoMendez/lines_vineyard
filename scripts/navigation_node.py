@@ -79,13 +79,13 @@ class ImageFilter():
         condition2 = prop_right > self.proportion_criterion
         os.system('clear')
         if condition1 and not np.isposinf(prop_left):
-            self.vel_msg.angular.z = self.correction_gain* (prop_left)
+            self.vel_msg.angular.z = -self.correction_gain* (prop_left)
             print('Correction mode activated (turning right)')
             print('Proportion: ',str(prop_left))
             print('Velocity:')
             print(str(self.vel_msg))
         elif condition2 and not np.isposinf(prop_right):
-            self.vel_msg.angular.z = -self.correction_gain * (prop_right)
+            self.vel_msg.angular.z = self.correction_gain * (prop_right)
             print('Correction mode activated (turning left)')
             print('Proportion: ',str(prop_right))
             print('Velocity:')
@@ -122,7 +122,7 @@ class ImageFilter():
             self.center_init_flag = 1
         else:
             
-            if abs(self.center_record_index - index) < 150:
+            if abs(self.center_record_index - index) < 50:
                 self.center_record_index = index
                 self.center_record_y = y
                 self.center_record_x = x
