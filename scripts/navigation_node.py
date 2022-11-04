@@ -2,7 +2,6 @@
 
 #Code to filter the image with the otsu threshold
 
-from email.mime import image
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,8 +21,8 @@ class ImageFilter():
         self.pub_vel = rospy.Publisher('cmd_vel', Twist,queue_size=1)
 
         ############################### SUBSCRIBERS #####################################   
-        self.image_sub = rospy.Subscriber("/usb_cam/image_raw",Image,self.camera_callback) 
-        #self.image_sub = rospy.Subscriber("/realsense/color/image_raw",Image,self.camera_callback) 
+        #self.image_sub = rospy.Subscriber("/usb_cam/image_raw",Image,self.camera_callback) 
+        self.image_sub = rospy.Subscriber("/realsense/color/image_raw",Image,self.camera_callback) 
         self.vel_msg = Twist()
         ############ CONSTANTS ################  
         self.bridge_object = CvBridge() # create the cv_bridge object
@@ -32,16 +31,14 @@ class ImageFilter():
         self.bridge = CvBridge()
         self.vel_msg = Twist()      
         self.p = -0.01             #Control gain
-        self.vel_msg.linear.x = 0.2   #Linear velocity
+        self.vel_msg.linear.x = 0.5   #Linear velocity
         self.proportion_criterion = 1.5
-        self.correction_gain = 0.5  #Angular     
+        self.correction_gain = 0.05  #Angular     
 
         ########### VARIABLES ###########
         self.center_init_flag = 0
         self.center_allow_flag = 0
         self.center_record_index = 0
-        self.center_record_y = 0
-        self.center_record_x = 0
         self.center_record_left = 0
         self.center_record_right = 0
 
@@ -71,7 +68,6 @@ class ImageFilter():
         print (len(contours))
         plt.imshow(mask,cmap='gray')
         return mask
-
     def navigation(self,y,idx,left,right):
         prop_left = left/right
         prop_right = right/left
@@ -79,72 +75,63 @@ class ImageFilter():
         condition2 = prop_right > self.proportion_criterion
         os.system('clear')
         if condition1 and not np.isposinf(prop_left):
-            self.vel_msg.angular.z = -self.correction_gain* (prop_left)
+            self.vel_msg.angular.z = self.correction_gain* (prop_left)
             print('Correction mode activated (turning right)')
             print('Proportion: ',str(prop_left))
             print('Velocity:')
             print(str(self.vel_msg))
         elif condition2 and not np.isposinf(prop_right):
-            self.vel_msg.angular.z = self.correction_gain * (prop_right)
+            deviation = idx-(y/2)
+            self.vel_msg.angular.z = -self.correction_gain * (prop_right)
             print('Correction mode activated (turning left)')
             print('Proportion: ',str(prop_right))
+            print('Deviation: ',str(deviation))
             print('Velocity:')
             print(str(self.vel_msg))
         else:
             deviation = idx-(y/2)
             self.vel_msg.angular.z= deviation*self.p
             print('Target: ',str(idx) ,'(out of ',y,')')
+            print('Proportion: ',str(prop_right))
             print('Deviation: ',str(deviation))
             print('Velocity:')
             print(str(self.vel_msg))
         self.pub_vel.publish(self.vel_msg)
 
-    def center_detection(self,image):
-        x,y = image.shape
-        array = np.zeros((y,2))
-        for i in range(y):
-            value = np.sum(image[:,i])
-            array[i,1] = value
-            array[i,0] = i
-
-        array = array[array[:, 1].argsort()[::-1]]
-
-        index = int(np.mean(array[0:5,0]))
-        left = np.sum(image[0:int(x/3*2),0:index])
-        right = np.sum(image[0:int(x/3*2),index:y])
-
-        if self.center_init_flag == 0:
-            self.center_record_index = index
-            self.center_record_y = y
-            self.center_record_x = x
-            self.center_record_left = left
-            self.center_record_right = right
-            self.center_init_flag = 1
-        else:
-            
-            if abs(self.center_record_index - index) < 50:
-                self.center_record_index = index
-                self.center_record_y = y
-                self.center_record_x = x
-                self.center_record_left = left
-                self.center_record_right = right
-            else:
-                pass
-
-            #print('index detect|control: ',index, ' | ',self.center_record_index)
-
-        return self.center_record_y, self.center_record_x, self.center_record_index, self.center_record_left, self.center_record_right
-
     def image_processing(self,image):
         gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         blur = cv2.GaussianBlur(gray,(5,5),0)
         ret,otsu = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-        blob = self.blob_filter(otsu)
+        otsu = self.blob_filter(otsu)
         image_message = self.bridge.cv2_to_imgmsg(otsu, encoding="passthrough")
         self.pub.publish(image_message)
-        y,x,index,left,right = self.center_detection(blob)
-        self.navigation(y,index,left,right)
+        x,y = otsu.shape
+        array = np.zeros((y,2))
+        for i in range(y):
+            value = np.sum(otsu[:,i])
+            array[i,1] = value
+            array[i,0] = i
+        #array=np.flipud(np.sort(array))
+        array = array[array[:, 1].argsort()[::-1]]
+        
 
+        index = int(np.mean(array[0:5,0]))
+        left = np.sum(otsu[0:int(x/3*2),0:index])
+        right = np.sum(otsu[0:int(x/3*2),index:y])
+        # if self.center_init_flag == 0:
+        #     self.center_record_index = index
+        #     self.center_record_left = left
+        #     self.center_record_right = right
+        #     self.center_init_flag = 1
+        # else:
+            
+        #     if abs(self.center_record_index - index) < 200:
+        #         self.center_record_index = index
+        #         self.center_record_left = left
+        #         self.center_record_right = right
+        
+        # self.navigation(y, self.center_record_index, self.center_record_left, self.center_record_right)
+        self.navigation(y,index,left,right)
         print('left: ',left)
         print('right ',right)
         print('index: ',index)
@@ -152,15 +139,12 @@ class ImageFilter():
 
         cv2.line(image,(index,0),(index,x),(255,0,0),9)
 
-
-        y,x,index,left,right = self.center_detection(otsu)
-        cv2.line(image,(index,0),(index,x),(0,255,255),9)
         return image
 
     def camera_callback(self,data):
         self.image_received=1
         try:
-            print("received ROS image, I will convert it to opencv")
+            #print("received ROS image, I will convert it to opencv")
             # We select bgr8 because its the OpenCV encoding by default
             self.cv_image = self.bridge_object.imgmsg_to_cv2(data, desired_encoding="bgr8")
             inicio = time.time()
