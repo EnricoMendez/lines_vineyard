@@ -1,0 +1,6 @@
+<launch>
+<node pkg='lines_vineyard' type='navigation_node.py' name='navigation_node'/>
+<node type="rviz" name="rviz" pkg="rviz" args="-d $(find lines_vineyard)/rviz_config/controlador.rviz"/>
+<include file="$(find cpr_agriculture_gazebo)/launch/agriculture_world.launch"/>
+<arg name="platform" value="jackal"/>
+</launch>

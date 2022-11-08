@@ -2,7 +2,7 @@
 from os import stat
 import rospy 
 import numpy as np
-
+import os
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
 from std_msgs.msg import String
@@ -30,6 +30,7 @@ class validation_class:
         print('initialized node')
         while not rospy.is_shutdown():
 
+            os.system('clear')  
             center_ref = self.right_dist - self.left_dist
             print("Center: ",center_ref)
             if center_ref == 0:
@@ -39,7 +40,7 @@ class validation_class:
             else:
                 status = "right"
 
-            print("Deviated to: ",status)    
+            print("Deviated to: ",status)  
             r.sleep()
 
             status_pub.publish(status)

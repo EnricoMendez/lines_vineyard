@@ -102,9 +102,9 @@ class ImageFilter():
         gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         blur = cv2.GaussianBlur(gray,(5,5),0)
         ret,otsu = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-        otsu = self.blob_filter(otsu)
         image_message = self.bridge.cv2_to_imgmsg(otsu, encoding="passthrough")
         self.pub.publish(image_message)
+        otsu = self.blob_filter(otsu)
         x,y = otsu.shape
         array = np.zeros((y,2))
         for i in range(y):
