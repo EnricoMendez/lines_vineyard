@@ -30,7 +30,7 @@ class ImageFilter():
         self.cv_image = 0 #This is just to create the global variable cv_image 
         self.bridge = CvBridge()
         self.vel_msg = Twist()      
-        self.p = -0.01             #Control gain
+        self.p = 0.01             #Control gain
         self.vel_msg.linear.x = 0.5   #Linear velocity
         self.proportion_criterion = 1.5
         self.correction_gain = 0.05  #Angular     
@@ -89,7 +89,7 @@ class ImageFilter():
             print('Velocity:')
             print(str(self.vel_msg))
         else:
-            deviation = idx-(y/2)
+            deviation = (y/2)-idx
             self.vel_msg.angular.z= deviation*self.p
             print('Target: ',str(idx) ,'(out of ',y,')')
             print('Proportion: ',str(prop_right))
