@@ -44,3 +44,12 @@ $ git clone https://github.com/bosch-ros-pkg/usb_cam.git
 Finally, to visualize the video run:
 
 $ rosrun image_view image_view image:=/usb_cam/image_raw 
+
+## Simulation
+
+Download the ROS worlds from clearpath: cd ~/catkin_ws/src
+git clone https://github.com/clearpathrobotics/cpr_gazebo.git
+
+To launch the world we used for testing run: 
+
+roslaunch cpr_agriculture_gazebo agriculture_world.launch platform:=jackal
