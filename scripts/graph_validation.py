@@ -9,6 +9,7 @@ import rospy
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
+from std_msgs.msg import String
 import time
 import os
 
@@ -19,10 +20,13 @@ class ImageFilter():
         self.pub2=rospy.Publisher("tie_method",Image,queue_size=10)
         self.pub=rospy.Publisher("otsuImage",Image,queue_size=10)
         self.pub_vel = rospy.Publisher('cmd_vel', Twist,queue_size=1)
+        self.pub_sides = rospy.Publisher('sides', String, queue_size=10)
+        self.test = rospy.Publisher('test', String, queue_size=10)
 
         ############################### SUBSCRIBERS #####################################   
         self.image_sub = rospy.Subscriber("/usb_cam/image_raw",Image,self.camera_callback) 
         #self.image_sub = rospy.Subscriber("/realsense/color/image_raw",Image,self.camera_callback) 
+        self.sides_sub = rospy.Subscriber("sides", String, self.sides_cb)
         self.vel_msg = Twist()
         ############ CONSTANTS ################  
         self.bridge_object = CvBridge() # create the cv_bridge object
@@ -30,9 +34,9 @@ class ImageFilter():
         self.cv_image = 0 #This is just to create the global variable cv_image 
         self.bridge = CvBridge()
         self.vel_msg = Twist()      
-        self.p = 0.01                                               #Control gain
+        self.p = -0.01             #Control gain
         self.vel_msg.linear.x = 0.5   #Linear velocity
-        self.proportion_criterion = 1.6
+        self.proportion_criterion = 1.5
         self.correction_gain = 0.05  #Angular     
 
         ########### VARIABLES ###########
@@ -68,28 +72,31 @@ class ImageFilter():
         print (len(contours))
         plt.imshow(mask,cmap='gray')
         return mask
+
     def navigation(self,y,idx,left,right):
+        sides_str = str(left)+","+str(right)
+        self.pub_sides.publish(sides_str)
         prop_left = left/right
         prop_right = right/left
         condition1 = prop_left > self.proportion_criterion
         condition2 = prop_right > self.proportion_criterion
         os.system('clear')
         if condition1 and not np.isposinf(prop_left):
-            self.vel_msg.angular.z = -self.correction_gain* (prop_left)
+            self.vel_msg.angular.z = self.correction_gain* (prop_left)
             print('Correction mode activated (turning right)')
             print('Proportion: ',str(prop_left))
             print('Velocity:')
             print(str(self.vel_msg))
         elif condition2 and not np.isposinf(prop_right):
             deviation = idx-(y/2)
-            self.vel_msg.angular.z = self.correction_gain * (prop_right)
+            self.vel_msg.angular.z = -self.correction_gain * (prop_right)
             print('Correction mode activated (turning left)')
             print('Proportion: ',str(prop_right))
             print('Deviation: ',str(deviation))
             print('Velocity:')
             print(str(self.vel_msg))
         else:
-            deviation = (y/2)-idx
+            deviation = idx-(y/2)
             self.vel_msg.angular.z= deviation*self.p
             print('Target: ',str(idx) ,'(out of ',y,')')
             print('Proportion: ',str(prop_right))
@@ -156,6 +163,14 @@ class ImageFilter():
             
         except CvBridgeError as e:
             print(e) 
+
+    def sides_cb(self,data):
+        data_str = str(data)
+        sides_list = data_str.split(' ',',')
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",str(sides_list[0]))
+        #self.test.publish(l)
+        #str(sides_list[0])
+        
 
     def cleanup(self):  
         #This function is called just before finishing the node  
