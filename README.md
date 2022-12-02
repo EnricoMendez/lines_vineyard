@@ -1,7 +1,7 @@
 # lines_vineyard
 ROS package for research of crop row detection in vineyards. Worked in ROS Noetic.
 
-## Repository content
+## Directory content
 
 bags: contains rosbags recorded during the research test
 
