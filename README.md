@@ -21,6 +21,12 @@ There are three ways to use the code. Using simulation, connect to a physical pl
 
 #### Simulation
 
+Download the simulation using the guide in the section of "Software used" subsection "Simulation" of this README.
+
+Once you have the simulation running in Gazebo, add two boxes and make them into two large walls to the side of the Jackal. As shown in the nect image:
+
+![alt text](https://github.com/EnricoMendez/lines_vineyard/blob/main/images/imagen_2022-12-02_013723225.png?raw=true)
+
 #### Physical platform
 
 #### Rosbag test
