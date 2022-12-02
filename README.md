@@ -1,6 +1,16 @@
 # lines_vineyard
 ROS package for research of crop row detection in vineyards. Worked in ROS Noetic.
 
+## Repository content
+
+bags: contains rosbags recorded during the research test
+images: contains images for the README
+launch: 
+rviz_config: contains the Rviz configuration use during the research
+scripts: is where the code developed is located
+test_videos: contains videos of the execution of the code in a physical robotic platform
+worlds: 
+
 ## Installation
 To follow this guide is ROS Noetic already installed. 
 
@@ -20,7 +30,7 @@ $ catkin_make
 ## Run the code
 
 ### Setup
-There are three ways to use the code. Using simulation, connect to a physical platform, and using a rosbag to simulate one of the test made by the owners of thies repository.
+There are three ways to use the code. Using simulation, connect to a physical platform, and using a rosbag to simulate one of the test made by the owners of this repository.
 
 #### Simulation
 
@@ -42,6 +52,7 @@ Now you can run the code.
 $ cd ~/catkin_ws/
 $ rosrun lines_vineyard navigation_node.py
 
+
 #### Physical platform
 
 To use this code in a physical platform is needed a robotic paltform and a camera connected to it. For this work we used the robot Jackal of Clearpath and connected a webcam model Logitech C525.
@@ -55,11 +66,36 @@ Finally, run the ROS node.
 $ cd ~/catkin_ws/
 $ rosrun lines_vineyard navigation_node.py
 
+
 #### Rosbag test
 
+Using a rosbag allow other people to see the data collected during our tests. In the "bags" folder of the repository are found some of rosbags that can be used to run the code.
+
+Open a terminal and go to the "bags" directory
+
+$ cd ~/catkin_ws/src/lines_vineyard/bags/
+
+Play one of the rosbags in the folder
+
+$ rosbag play [file_name.bag] -l
+
+The -l make the rosbag to play in a loop. [file_name.bag] could be any of the files in the directory.
+
+Finally, run the code.
+
+$ cd ~/catkin_ws/
+$ rosrun lines_vineyard navigation_node.py
 
 
-### Rviz
+## Visualition with Rviz
+
+To know what is seeing the camera and ehat is happening with the segmetation use the rviz congifuration file available in the repository.
+
+Open Rviz and go to 
+
+
+## Validation Node
+
 
 
 # Software used
