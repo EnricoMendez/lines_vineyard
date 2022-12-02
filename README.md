@@ -96,10 +96,25 @@ $ rosrun lines_vineyard navigation_node.py
 
 ## Visualition with Rviz
 
-To know what is seeing the camera and ehat is happening with the segmetation use the rviz congifuration file available in the repository.
+To know what is seeing the camera and what is happening with the segmetation use the rviz congifuration file available in the repository.
 
-Open Rviz and go to 
+Open Rviz and click the File button
 
+![alt text](https://github.com/EnricoMendez/lines_vineyard/blob/main/images/rviz_guide1.png?raw=true)
+
+Select "Open Config". Go to the directory of this repository and open the rviz_config folder
+
+![alt text](https://github.com/EnricoMendez/lines_vineyard/blob/main/images/rviz_guide2.png?raw=true)
+
+Select the "visor.rviz" file
+
+![alt text](https://github.com/EnricoMendez/lines_vineyard/blob/main/images/rviz_guide3.png?raw=true)
+
+Now you should be able to see this view.
+
+IMAGEN CON LA VISTA DE RVIZ
+
+If you can't see it make sure you are running the navigation mode as explained above.
 
 ## Validation Node
 
