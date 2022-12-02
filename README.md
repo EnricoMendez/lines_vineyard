@@ -64,9 +64,9 @@ $ rosrun lines_vineyard navigation_node.py
 
 To use this code in a physical platform is needed a robotic paltform and a camera connected to it. For this work we used the robot Jackal of Clearpath and connected a webcam model Logitech C525.
 
-Install the Software indicated in the section of "Software used" subsection "Webcam" of this README. When is done you can turn on the camera to start navigating.
+Install the Software indicated in the section of "Software used" subsection "Webcam" of this README. When is done you can turn on the camera to start navigating. The device can be different "/dev/video0" could be "/dev/video1" or "/dev/video2".
 
-$ COMANDO PARA ENCENDER LA CAMARA
+$ rosrun usb_cam usb_cam_node _video_device:=/dev/video0 _pixel_format:=yuyv  
 
 Finally, run the ROS node.
 
