@@ -1,6 +1,30 @@
 # lines_vineyard
 ROS package for research of crop row detection in vineyards. Worked in ROS Noetic
 
+## Installation
+Go to the src directory in your ROS workspace. Change "catkin_ws" on the command to the name of your workspace.
+
+$ cd ~/catkin_ws/src
+
+Copy this respository in the src directory. 
+
+$ git https://github.com/EnricoMendez/lines_vineyard.git
+
+Compile the workspace using catkin_make.
+
+$ cd ..
+$ catkin_make
+
+## Run the code
+### Setup
+There are three ways to use the code. Using simulation, connect to a physical platform, and using a rosbag to simulate one of the test made by the owners of thies repository.
+
+#### Simulation
+
+#### Physical platform
+
+#### Rosbag test
+
 # Software used
 
 This package was run using the following software
