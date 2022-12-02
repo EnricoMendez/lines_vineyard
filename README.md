@@ -4,12 +4,19 @@ ROS package for research of crop row detection in vineyards. Worked in ROS Noeti
 ## Repository content
 
 bags: contains rosbags recorded during the research test
+
 images: contains images for the README
+
 launch: 
+
 rviz_config: contains the Rviz configuration use during the research
+
 scripts: is where the code developed is located
+
 test_videos: contains videos of the execution of the code in a physical robotic platform
+
 worlds: 
+
 
 ## Installation
 To follow this guide is ROS Noetic already installed. 
