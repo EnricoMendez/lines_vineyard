@@ -1,7 +1,9 @@
 # lines_vineyard
-ROS package for research of crop row detection in vineyards. Worked in ROS Noetic
+ROS package for research of crop row detection in vineyards. Worked in ROS Noetic.
 
 ## Installation
+To follow this guide is ROS Noetic already installed. 
+
 Go to the src directory in your ROS workspace. Change "catkin_ws" on the command to the name of your workspace.
 
 $ cd ~/catkin_ws/src
@@ -16,6 +18,7 @@ $ cd ..
 $ catkin_make
 
 ## Run the code
+
 ### Setup
 There are three ways to use the code. Using simulation, connect to a physical platform, and using a rosbag to simulate one of the test made by the owners of thies repository.
 
@@ -23,13 +26,41 @@ There are three ways to use the code. Using simulation, connect to a physical pl
 
 Download the simulation using the guide in the section of "Software used" subsection "Simulation" of this README.
 
-Once you have the simulation running in Gazebo, add two boxes and make them into two large walls to the side of the Jackal. As shown in the nect image:
+Once you have the simulation running in Gazebo, add two boxes and make them into two large walls to the side of the Jackal. As shown in the next image:
 
 ![alt text](https://github.com/EnricoMendez/lines_vineyard/blob/main/images/imagen_2022-12-02_013723225.png?raw=true)
 
+Then, open the navigation node located in the scripts folder.
+
+$ cd ~/catkin_ws/src/lines_vineyard/scripts/
+$ nano navigation_node.py
+
+Comment line 24 and uncomment line 25 of the file and save the changes.
+
+Now you can run the code.
+
+$ cd ~/catkin_ws/
+$ rosrun lines_vineyard navigation_node.py
+
 #### Physical platform
 
+To use this code in a physical platform is needed a robotic paltform and a camera connected to it. For this work we used the robot Jackal of Clearpath and connected a webcam model Logitech C525.
+
+Install the Software indicated in the section of "Software used" subsection "Webcam" of this README. When is done you can turn on the camera to start navigating.
+
+$ COMANDO PARA ENCENDER LA CAMARA
+
+Finally, run the ROS node.
+
+$ cd ~/catkin_ws/
+$ rosrun lines_vineyard navigation_node.py
+
 #### Rosbag test
+
+
+
+### Rviz
+
 
 # Software used
 
@@ -44,10 +75,7 @@ To install use: pip install opencv-python
 Open cv documentation can be found here: https://docs.opencv.org/4.x/index.html
 
 
-## WEBCAM
-Model: Logitech C525
-
-Installation:
+## Webcam
 
 First install the v4l-util Ubuntu package. It is a collection of command-line V4L utilities used by the usb_cam package: 
 
