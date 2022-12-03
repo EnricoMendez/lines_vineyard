@@ -11,13 +11,17 @@ This folder contains the launch files of the package
 
 This folder contains the ROS nodes. 
 
-### Rviz_onfig 
+### Rviz_config 
 
 This folder contains the rviz configurations needed for image monitoring. 
 
 ### Worlds 
 
 This folder contains the gazeebo world used in the simulation. 
+
+### Images
+
+This folder contains the images used in this README
 
 
 ## Installation
