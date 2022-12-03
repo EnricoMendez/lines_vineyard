@@ -1,25 +1,27 @@
 # lines_vineyard
 ROS package for research of crop row detection in vineyards. Worked in ROS Noetic.
 
-## Directory content
+## Folders descriptions  
 
-bags: contains rosbags recorded during the research test
+### Launch 
 
-images: contains images for the README
+This folder contains the launch files of the package 
 
-launch: 
+### Scripts 
 
-rviz_config: contains the Rviz configuration use during the research
+This folder contains the ROS nodes. 
 
-scripts: is where the code developed is located
+### Rviz_onfig 
 
-test_videos: contains videos of the execution of the code in a physical robotic platform
+This folder contains the rviz configurations needed for image monitoring. 
 
-worlds: 
+### Worlds 
+
+This folder contains the gazeebo world used in the simulation. 
 
 
 ## Installation
-To follow this guide is ROS Noetic already installed. 
+To follow this guide is needed ROS Noetic to be already installed. 
 
 Go to the src directory in your ROS workspace. Change "catkin_ws" on the command to the name of your workspace.
 
@@ -76,7 +78,7 @@ $ rosrun lines_vineyard navigation_node.py
 
 #### Rosbag test
 
-Using a rosbag allow other people to see the data collected during our tests. In the "bags" folder of the repository are found some of rosbags that can be used to run the code.
+Using a rosbag allow other people to see the data collected during our tests. In the "Additional Material" section of this README is the link for some of rosbags that can be used to run the code.
 
 Open a terminal and go to the "bags" directory
 
@@ -112,12 +114,9 @@ Select the "visor.rviz" file
 
 Now you should be able to see this view.
 
-IMAGEN CON LA VISTA DE RVIZ
+![alt text](https://github.com/EnricoMendez/lines_vineyard/blob/main/images/guide4.png?raw=true)
 
 If you can't see it make sure you are running the navigation mode as explained above.
-
-## Validation Node
-
 
 
 # Software used
@@ -170,23 +169,6 @@ To launch the world we used for testing run:
 
 roslaunch cpr_agriculture_gazebo agriculture_world.launch platform:=jackal
 
-## Folders descriptions  
-
-### Launch 
-
-This folder contains the launch files of the package 
-
-### Scripts 
-
-This folder contains the ROS nodes. 
-
-### Rviz_onfig 
-
-This folder contains the rviz configurations needed for image monitoring. 
-
-### Worlds 
-
-This folder contains the gazeebo world used in the simulation. 
 
 ## Additional material  
 
