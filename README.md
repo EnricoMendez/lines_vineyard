@@ -169,3 +169,25 @@ git clone https://github.com/clearpathrobotics/cpr_gazebo.git
 To launch the world we used for testing run: 
 
 roslaunch cpr_agriculture_gazebo agriculture_world.launch platform:=jackal
+
+## Folders descriptions  
+
+### Launch 
+
+This folder contains the launch files of the package 
+
+### Scripts 
+
+This folder contains the ROS nodes. 
+
+### Rviz_onfig 
+
+This folder contains the rviz configurations needed for image monitoring. 
+
+### Worlds 
+
+This folder contains the gazeebo world used in the simulation. 
+
+## Additional material  
+
+In this drive folder ROS bags and videos from the experiments can be found in:  https://drive.google.com/drive/folders/1dIzErmy8LNG2bY9_CeFCYX4DfP9003LY?usp=sharing 
