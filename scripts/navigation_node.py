@@ -16,8 +16,8 @@ class ImageFilter():
     def __init__(self):  
         rospy.on_shutdown(self.cleanup)  
         ###******* INIT PUBLISHERS *******###  
-        self.pub2=rospy.Publisher("tie_method",Image,queue_size=10)
-        self.pub=rospy.Publisher("otsuImage",Image,queue_size=10)
+        self.pub2=rospy.Publisher("tie_method2",Image,queue_size=10)
+        self.pub=rospy.Publisher("otsuImage2",Image,queue_size=10)
         self.pub_vel = rospy.Publisher('cmd_vel', Twist,queue_size=1)
 
         ############################### SUBSCRIBERS #####################################   
@@ -32,8 +32,8 @@ class ImageFilter():
         self.vel_msg = Twist()      
         self.p = 0.01                                               #Control gain
         self.vel_msg.linear.x = 0.5   #Linear velocity
-        self.proportion_criterion = 1.6
-        self.correction_gain = 0.05  #Angular     
+        self.proportion_criterion = 1.4
+        self.correction_gain = -0.05  #Angular     
 
         ########### VARIABLES ###########
         self.center_init_flag = 0
@@ -52,7 +52,7 @@ class ImageFilter():
         cv2.destroyAllWindows()        
     def blob_filter(self,image):
         contours,hierarchy = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-        
+        output = image.copy()
         maxContour = 0
         for contour in contours:
             
@@ -64,9 +64,8 @@ class ImageFilter():
         # Create a mask only containing the largest blop
         mask = np.zeros_like(image)
         mask = mask.astype('uint8')
-        mask=cv2.fillPoly(mask,[maxContourData],1)
+        mask=cv2.fillPoly(mask,[maxContourData],color=(255,0,0))
         print (len(contours))
-        plt.imshow(mask,cmap='gray')
         return mask
     def navigation(self,y,idx,left,right):
         prop_left = left/right
@@ -102,9 +101,9 @@ class ImageFilter():
         gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         blur = cv2.GaussianBlur(gray,(5,5),0)
         ret,otsu = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+        otsu = self.blob_filter(otsu)
         image_message = self.bridge.cv2_to_imgmsg(otsu, encoding="passthrough")
         self.pub.publish(image_message)
-        otsu = self.blob_filter(otsu)
         x,y = otsu.shape
         array = np.zeros((y,2))
         for i in range(y):
@@ -118,19 +117,6 @@ class ImageFilter():
         index = int(np.mean(array[0:5,0]))
         left = np.sum(otsu[0:int(x/3*2),0:index])
         right = np.sum(otsu[0:int(x/3*2),index:y])
-        # if self.center_init_flag == 0:
-        #     self.center_record_index = index
-        #     self.center_record_left = left
-        #     self.center_record_right = right
-        #     self.center_init_flag = 1
-        # else:
-            
-        #     if abs(self.center_record_index - index) < 200:
-        #         self.center_record_index = index
-        #         self.center_record_left = left
-        #         self.center_record_right = right
-        
-        # self.navigation(y, self.center_record_index, self.center_record_left, self.center_record_right)
         self.navigation(y,index,left,right)
         print('left: ',left)
         print('right ',right)

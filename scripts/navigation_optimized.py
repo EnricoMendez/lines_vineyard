@@ -16,8 +16,8 @@ class ImageFilter():
     def __init__(self):  
         rospy.on_shutdown(self.cleanup)  
         ###******* INIT PUBLISHERS *******###  
-        self.pub2=rospy.Publisher("tie_method",Image,queue_size=10)
-        self.pub=rospy.Publisher("otsuImage",Image,queue_size=10)
+        self.pub2=rospy.Publisher("tie_method_op",Image,queue_size=10)
+        self.pub=rospy.Publisher("otsuImage_op",Image,queue_size=10)
         self.pub_vel = rospy.Publisher('cmd_vel', Twist,queue_size=1)
 
         ############################### SUBSCRIBERS #####################################   
@@ -102,10 +102,10 @@ class ImageFilter():
         otsu = self.blob_filter(otsu)
         x,y = otsu.shape
 
-        array = np.array([np.sum(otsu[:, i]) for i in range(otsu.shape[1])])
+        array = np.array([np.sum(otsu[:, i]) for i in range(y)])
         index = array.argsort()[::-1]
 
-        index = int(np.mean(array[0:5,0]))
+        index = int(np.mean(array[0:5]))
         left = np.sum(otsu[0:int(x/3*2),0:index])
         right = np.sum(otsu[0:int(x/3*2),index:y])
         
@@ -122,7 +122,6 @@ class ImageFilter():
     def camera_callback(self,data):
         self.image_received=1
         try:
-            #print("received ROS image, I will convert it to opencv")
             # We select bgr8 because its the OpenCV encoding by default
             self.cv_image = self.bridge_object.imgmsg_to_cv2(data, desired_encoding="bgr8")
             inicio = time.time()
@@ -136,9 +135,7 @@ class ImageFilter():
             print(e) 
 
     def cleanup(self):  
-        #This function is called just before finishing the node  
-        # You can use it to clean things up before leaving  
-        # Example: stop the robot before finishing a node. 
+        #This function is called just before finishing the node it stops the robot
         stop = Twist()
         self.pub_vel.publish(stop)
         print('Node killed successfully')   
