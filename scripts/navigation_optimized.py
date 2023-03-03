@@ -102,10 +102,11 @@ class ImageFilter():
         otsu = self.blob_filter(otsu)
         x,y = otsu.shape
 
-        array = np.array([np.sum(otsu[:, i]) for i in range(y)])
-        index = array.argsort()[::-1]
+        column_sum = np.array([np.sum(otsu[:, i]) for i in range(y)])
+        index_array = column_sum.argsort()[::-1]
 
-        index = int(np.mean(array[0:5]))
+
+        index = int(np.mean(index_array[0:5]))
         left = np.sum(otsu[0:int(x/3*2),0:index])
         right = np.sum(otsu[0:int(x/3*2),index:y])
         
