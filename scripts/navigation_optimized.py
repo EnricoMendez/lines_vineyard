@@ -103,7 +103,7 @@ class ImageFilter():
         x,y = otsu.shape
 
         array = np.array([np.sum(otsu[:, i]) for i in range(y)])
-        index = array.argsort()[::-1]
+        array = array.argsort()[::-1]
 
         index = int(np.mean(array[0:5]))
         left = np.sum(otsu[0:int(x/3*2),0:index])
