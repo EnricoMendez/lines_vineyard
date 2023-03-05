@@ -97,17 +97,19 @@ class ImageFilter():
         gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         blur = cv2.GaussianBlur(gray,(5,5),0)
         ret,otsu = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-        image_message = self.bridge.cv2_to_imgmsg(otsu, encoding="passthrough")
+        blob_filtered_image = self.blob_filter(otsu)
+        processed_image = blob_filtered_image
+        image_message = self.bridge.cv2_to_imgmsg(processed_image, encoding="passthrough")
         self.pub.publish(image_message)
-        otsu = self.blob_filter(otsu)
-        x,y = otsu.shape
+        x,y = processed_image.shape
 
-        array = np.array([np.sum(otsu[:, i]) for i in range(y)])
-        array = array.argsort()[::-1]
+        column_sum = np.array([np.sum(processed_image[:, i]) for i in range(y)])
+        index_array = column_sum.argsort()[::-1]
 
-        index = int(np.mean(array[0:5]))
-        left = np.sum(otsu[0:int(x/3*2),0:index])
-        right = np.sum(otsu[0:int(x/3*2),index:y])
+
+        index = int(np.mean(index_array[0:5]))
+        left = np.sum(processed_image[0:int(x/3*2),0:index])
+        right = np.sum(processed_image[0:int(x/3*2),index:y])
         
         self.navigation(y,index,left,right)
         print('left: ',left)
